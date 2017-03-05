@@ -5,6 +5,7 @@ Meteor.startup(() => {
   console.log("Hello World");
   let user_settings_data = {}
   let next_trigger = {}
+  let last_timestamps = []
   triggerFebrezeLed(0);
   //run every 5seconds
   function setupSystem()
@@ -22,7 +23,8 @@ Meteor.startup(() => {
         // get the time for last midnight
         let last_midnight_time = (new Date()).setHours(0,0,0,0);
         console.log("Midnight: " + last_midnight_time);
-
+        let new_timestamps = []
+        index = 0
         // foreach trigger
         for (setting of user_settings) {
           console.log(setting);
@@ -38,18 +40,26 @@ Meteor.startup(() => {
           let delay_from_now = Number(future_time - Date.now());
           console.log("delay_from_now: " + delay_from_now);
           const MS_IN_5_MINS = 5*60000;
+          new_timestamps[index] = setting.timestamp
+          if(last_timestamps[index] != new_timestamps[index]) {
+            console.log("SHOULD BE TURNED ON NOW");
           // if ((delay_from_now > -5000) && (delay_from_now < 5000)) {
             //start the timer to trigger the febreze command with appropriate arguments
             next_trigger = setting.name;
-            Meteor.setTimeout(triggerFebreze, delay_from_now);
+            triggerFebreze()
+            // Meteor.setTimeout(triggerFebreze, delay_from_now);
           // }
+          }
+          index++;
         }
+        last_timestamps = new_timestamps
       }
     });
   }
 
   function findNextTrigger(){
     console.log("findNextTrigger called");
+    return next_trigger;
   }
 
   function triggerFebreze(){
