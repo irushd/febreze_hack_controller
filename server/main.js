@@ -5,8 +5,8 @@ Meteor.startup(() => {
   console.log("Hello World");
   let user_settings_data = {}
   let next_trigger = {}
-
-  //run every 5 mins
+  triggerFebrezeLed(0);
+  //run every 5seconds
   function setupSystem()
   {
     // Get the latest json file and trigger the timer to run the behavior accroding to it
@@ -38,11 +38,11 @@ Meteor.startup(() => {
           let delay_from_now = Number(future_time - Date.now());
           console.log("delay_from_now: " + delay_from_now);
           const MS_IN_5_MINS = 5*60000;
-          if ((delay_from_now > -500) && (delay_from_now < MS_IN_5_MINS)) {
+          // if ((delay_from_now > -5000) && (delay_from_now < 5000)) {
             //start the timer to trigger the febreze command with appropriate arguments
             next_trigger = setting.name;
             Meteor.setTimeout(triggerFebreze, delay_from_now);
-          }
+          // }
         }
       }
     });
@@ -82,6 +82,6 @@ Meteor.startup(() => {
     }
 
     //setup the cron job to refresh the user settings every 5 mins
-    Meteor.setInterval(setupSystem, 5*60*1000);
+    Meteor.setInterval(setupSystem, 5*1000);
     setupSystem();
   });
